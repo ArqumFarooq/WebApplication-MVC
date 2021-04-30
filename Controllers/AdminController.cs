@@ -94,7 +94,7 @@ namespace WebApplication_MVC.Controllers
 
         }
 
-        public ActionResult AdminViewUser(string msg = "")
+        public ActionResult AdminViewUser(int id=-1,string msg = "")
         {
             try
             {
@@ -105,8 +105,17 @@ namespace WebApplication_MVC.Controllers
                 }
                 if (Session["Role"].ToString() == "1")
                 {
-                    List<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db);
-                    return View(userslist);
+                    if (id == -1)
+                    {
+                        List<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db);
+                        return View(userslist);
+                    }
+                    else
+                    {
+                        List<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db).Where(x=>x.Id == id).ToList();
+                        return View(userslist);
+                    }
+                    
                 }
 
                 return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
