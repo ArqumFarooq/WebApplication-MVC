@@ -1,0 +1,43 @@
+﻿@model WebApplication_MVC.Models.User
+
+@{
+    ViewBag.Title = "PostAdminSearchUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container p-3 my-3">
+    <div class="content d-flex ">
+        <!-- Form horizontal -->
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="panel panel-flat">
+                <div class="panel-heading">
+                    <h5 class="panel-title">User Record<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                </div>
+                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                    <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="First Name: activate to sort column descending">First Name</th>
+                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Last Name: activate to sort column ascending">Last Name</th>
+                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Last Name: activate to sort column ascending">Contact</th>
+                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Last Name: activate to sort column ascending">Total Books</th>
+                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Email: activate to sort column ascending">Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr role="row" class="odd">
+                                <td class="sorting_1">@Model.FirstName</td>
+                                <td>@Model.LastName</td>
+                                <td>@Model.Contact</td>
+                                <td>@Model.Books.Count</td>
+                                <td>@Model.Email  </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /form horizontal -->
+    </div>
+</div>

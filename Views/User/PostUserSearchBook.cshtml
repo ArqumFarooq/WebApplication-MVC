@@ -1,0 +1,38 @@
+﻿@model WebApplication_MVC.Models.Book
+
+@{
+    ViewBag.Title = "PostAdminSearchUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container p-3 my-3">
+    <div class="content d-flex ">
+        <!-- Form horizontal -->
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="panel panel-flat">
+                <div class="panel-heading">
+                    <h5 class="panel-title" style="text-align:center">Book Record<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                </div>
+                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                    <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Sr.No: activate to sort column descending">Sr.No</th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="First Name: activate to sort column descending">Title Name</th>
+                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Last Name: activate to sort column ascending">Auther Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr role="row" class="odd">
+                                <td>@Model.Id</td>
+                                <td>@Model.Title</td>
+                                <td>@Model.Auther  </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /form horizontal -->
+    </div>
+</div>

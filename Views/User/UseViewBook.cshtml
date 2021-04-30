@@ -1,0 +1,101 @@
+﻿@model WebApplication_MVC.Models.Book
+@{
+    ViewBag.Title = "UseViewBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Do You Want to Delete??</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer text-center">
+                <a class="btn btn-primary" id="deleteId">Yes</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content d-flex align-items-lg-center">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <h5 class="panel-title text-center"> book Record Table<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+            </div>
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="datatable-header">
+                </div>
+                <br>
+                <br>
+                <div class="content d-flex align-items-lg-center">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <div>@ViewBag.msg</div>
+                            <h5 class="panel-title" align="center">Book Record<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                        </div>
+                        <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                            <thead>
+                                <tr role="row">
+                                    <th>Sr.No</th>
+                                    @*<th>First Name </th>
+                                    <th>Last Name</th>*@
+                                    <th>Title</th>
+                                    <th>Auther</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var i = 1;
+                                                                <tr role="row" class="odd">
+                                                                    <td>@i</td>
+                                                                    @*<td>@Model.User.FirstName</td>
+                                                                    <td>@Model.User.LastName</td>*@
+                                                                    <td>@Model.Title</td>
+                                                                    <td>@Model.Auther</td>
+                                                                    <td class="text-center">
+                                                                        <ul class="icons-list">
+                                                                            <li class="dropdown">
+                                                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                                                    <i class="icon-menu9"></i>
+                                                                                </a>
+                                                                                <ul class="dropdown-menu dropdown-menu-right">
+                                                                                    <li><a href="@Url.Action("UserEditBook", "User", new {id = Model.Id})"><i class="icon-glyphicon-edit"></i> Edit Book</a></li>
+                                                                                    <li><a onclick="deleteFunction(@Model.Id)" data-toggle="modal" data-target="#deleteModal"><i class="icon-glyphicon-trash"></i> Delete Book</a></li>
+                                                                                </ul>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </td>
+                                                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../User/UserDeleteBook?id=" + id + "";
+    }
+</script>
+@*@section head
+    {
+        <script src="~/Content/assets/js/plugins/tables/datatables/datatables.min.js"></script>
+        <script src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+        <script src="~/Content/assets/js/pages/datatables_basic.js"></script>}*@

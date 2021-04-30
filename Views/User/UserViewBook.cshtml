@@ -1,0 +1,106 @@
+﻿@model IEnumerable<WebApplication_MVC.ViewModel.BookViewModel>
+@{
+    ViewBag.Title = "UserViewBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Do You Want to Delete??</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer text-center">
+                <a class="btn btn-primary" id="deleteId">Yes</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="content d-flex align-items-lg-center">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <h5 class="panel-title text-center">User Book Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                <div>@ViewBag.msg</div>
+            </div>
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="datatable-header">
+                    @*<a href="@Url.Action("UseViewBook", "User")"><i class="icon-glyphicon-edit"></i> Search Book</a>*@
+                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" " align="center">
+                        <form action="@Url.Action("UseViewBook","User")" method="post">
+                            <div class="form-group">
+                                <label>Search User:</label>
+                                <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
+                                    @foreach (var item in Model)
+                                    {
+                                        <option value="@item.Id">@item.Title</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-danger legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="content d-flex align-items-lg-center">
+                    <div class="panel panel-flat">
+                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                            <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th>Sr.No</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var i = 0;
+                                        foreach (var item in Model)
+                                        {
+                                            i++;
+                                            <tr role="row" class="odd">
+                                                <td>@i</td>
+                                                <td>@item.Title</td>
+                                                <td>@item.Auther</td>
+                                                <td class="text-center">
+                                                    <ul class="icons-list">
+                                                        <li class="dropdown">
+                                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                                <i class="icon-menu9"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                                <li><a href="@Url.Action("UserEditBook", "User", new {id = item.Id})"><i class="icon-glyphicon-edit"></i> Edit Book</a></li>
+                                                                <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="icon-glyphicon-trash"></i> Delete Book</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../User/UserDeleteBook?id=" + id + "";
+    }
+</script>

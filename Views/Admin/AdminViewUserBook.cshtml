@@ -1,0 +1,55 @@
+﻿
+@using WebApplication_MVC.Models
+
+@{
+    ViewBag.Title = "AdminViewUserBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="content d-flex align-items-lg-center">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <h5 class="panel-title text-center">User Book Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+            </div>
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="content d-flex align-items-lg-center">
+                    <div class="panel panel-flat">
+
+                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                            <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th>Sr.No</th>
+                                        <th>First Name</th>
+                                        <th>Second Name</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var i = 0;
+                                        foreach (Book item in ViewBag.booklist)
+                                        {
+                                            i++;
+                                            <tr role="row" class="odd">
+                                                <td>@i</td>
+                                                <td>@item.User.FirstName</td>
+                                                <td>@item.Auther</td>
+                                                <td>@item.Title</td>
+                                                <td>@item.Auther</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
