@@ -28,11 +28,11 @@ namespace WebApplication_MVC.Controllers
                     ViewBag.TotalUsers = userdata.Count;
                     return View();
                 }
-                return RedirectToAction("Login", "Auth", new { msg = " Session Expired from ADMIN DashBoard, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -52,7 +52,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -70,18 +70,29 @@ namespace WebApplication_MVC.Controllers
                 {
                     if (_user != null)
                     {
-                        _user.Role = 1;
-                        _user.IsActive = 1;
-                        _user.CreatedAt = DateTime.Now;
-                        bool checkUser = new UserBL().UpdateUser(_user, db);
-                        if (checkUser == true)
+                        int emailCount = new UserBL().GetActiveUserList(db).Where(x=> x.Email.ToLower() == _user.Email.ToLower() && x.Id != _user.Id).Count();
+                        if (emailCount == 0)
                         {
-                            Session["UserName"] = _user.FirstName + _user.LastName;
-                            return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated successfully" });
+                            User updateAdmin = new UserBL().GetUserById(_user.Id, db);
+                            updateAdmin.FirstName = _user.FirstName.Trim();
+                            updateAdmin.LastName = _user.LastName.Trim();
+                            updateAdmin.Contact = _user.Contact.Trim();
+                            updateAdmin.Password = _user.Password.Trim();
+                            updateAdmin.Email = _user.Email.Trim();
+                            bool checkUser = new UserBL().UpdateUser(updateAdmin, db);
+                            if (checkUser == true)
+                            {
+                                Session["UserName"] = _user.FirstName + _user.LastName;
+                                return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated successfully" });
+                            }
+                            else
+                            {
+                                return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated Unsuccessfully bcz yoy enter empty name or maybe same email which exist in DB" });
+                            }
                         }
                         else
                         {
-                            return RedirectToAction("UserDashBoard", "User", new { msg = "Profile updated Unsuccessfully" });
+                            return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated Unsuccessfully either you enter the existent email" });
                         }
                     }
                 }
@@ -89,7 +100,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
             }
 
         }
@@ -108,11 +119,14 @@ namespace WebApplication_MVC.Controllers
                     if (id == -1)
                     {
                         List<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db);
+                        ViewBag.allUser = userslist;
                         return View(userslist);
                     }
                     else
                     {
                         IEnumerable<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db).Where(x => x.Id == id);
+                        List<User> allUserslist = new UserBL().GetActiveUserListWhereNoAdmin(db); ;
+                        ViewBag.allUser = allUserslist;
                         return View(userslist);
                     }
                 }
@@ -121,7 +135,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
         }
 
@@ -144,7 +158,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -163,7 +177,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
         }
 
@@ -203,7 +217,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -227,7 +241,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
             }
 
         }
@@ -251,7 +265,7 @@ namespace WebApplication_MVC.Controllers
                         _user.IsActive = 1;
                         _user.CreatedAt = DateTime.Now;
                         bool checkUser = new UserBL().UpdateUser(_user, db);
-                        if (checkUser == true) { return RedirectToAction("AdminViewUser", new { msg = "view Edited user " }); }
+                        if (checkUser == true) { return RedirectToAction("AdminViewUser", new { msg = "User has been Edited" }); }
                         ViewData["nerr1"] = "not null";
                         AdminEditUser(_user.Id);
                     }
@@ -262,7 +276,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
             }
 
         }
@@ -327,10 +341,25 @@ namespace WebApplication_MVC.Controllers
                 if (Session["Role"].ToString() == "1")
                 {
                     User user = new UserBL().GetUserId(db, id);
+                    //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1 && x.UserId == id).ToList();
+                    List<Book> usersbBookslist =  new BookBL().GetBookList(db).Where(x=> x.UserId == id).ToList();
+                    ViewBag.BookList = usersbBookslist;
+                    List<BookViewModel> data = new List<BookViewModel>();
+                    foreach (Book book in usersbBookslist)
+                    {
+
+                        book.UserId = book.UserId;
+                        book.CreatedAt = book.CreatedAt;
+                        book.Auther = book.Auther;
+                        book.Id = book.Id;
+                        book.IsActive = 0;
+                        book.Title = book.Title;
+                        new BookBL().DeleteBook(book, db);
+                    }
                     bool checkUser = new UserBL().DeleteUser(user, db);
                     if (checkUser == true)
                     {
-                        return RedirectToAction("AdminViewUser", new { msg = "delete User" });
+                        return RedirectToAction("AdminViewUser", new { msg = " User has been deleted" });
                     }
                     else
                     {
@@ -341,7 +370,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -398,7 +427,8 @@ namespace WebApplication_MVC.Controllers
                 {
                     if (id == -1)
                     {
-                        List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1).ToList();
+                        //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1).ToList();
+                        List<Book> usersbBookslist =  new BookBL().GetBookList(db);
                         ViewBag.BookList = usersbBookslist;
                         var data = new List<BookViewModel>();
                         foreach (var book in usersbBookslist)
@@ -418,7 +448,8 @@ namespace WebApplication_MVC.Controllers
                     }
                     else
                     {
-                        List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1 && x.UserId == id).ToList();
+                        //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1 && x.UserId == id).ToList();
+                        List<Book> usersbBookslist = new BookBL().GetBookList(db).Where(x => x.UserId == id).ToList();
                         ViewBag.BookList = usersbBookslist;
                         var data = new List<BookViewModel>();
                         foreach (var book in usersbBookslist)
@@ -442,7 +473,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
             }
 
         }

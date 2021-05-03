@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label>Search Book:</label>
                                 <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
-                                    @foreach (var item in Model)
+                                    @foreach (var item in ViewBag.allUserbook)
                                     {
                                         <option value="@item.Id">@item.Title</option>
                                     }
@@ -80,8 +80,8 @@
                                                                 <i class="icon-menu9"></i>
                                                             </a>
                                                             <ul class="dropdown-menu dropdown-menu-right">
-                                                                <li><a href="@Url.Action("UserEditBook", "User", new {id = item.Id})"><i class="icon-glyphicon-edit"></i> Edit Book</a></li>
-                                                                <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="icon-glyphicon-trash"></i> Delete Book</a></li>
+                                                                <li><a href="@Url.Action("UserEditBook", "User", new {id = item.Id})"><i class="glyphicon glyphicon-edit"></i> Edit Book</a></li>
+                                                                <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-trash"></i> Delete Book</a></li>
                                                             </ul>
                                                         </li>
                                                     </ul>

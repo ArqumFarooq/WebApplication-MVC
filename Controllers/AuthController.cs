@@ -24,16 +24,9 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path search" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
-        }
-
-        //[HandleError]
-        public ActionResult Error(string msg = "")
-        {
-            ViewBag.msg = msg;
-            return View();
         }
 
         [HttpPost]
@@ -52,7 +45,7 @@ namespace WebApplication_MVC.Controllers
                     var role = Session["Role"];
                     if (Equals(role, "1"))
                     {
-                        return RedirectToAction("AdminDashBoard", "Admin", new { msg = "" });
+                        return RedirectToAction("AdminDashBoard", "Admin");
                     }
                     return RedirectToAction("UserDashBoard", "User", new { msg = "" });
                 }
@@ -60,7 +53,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", new { msg = "error found" });
+                return RedirectToAction("Error", new { msg = "search for the page was not found" });
             }
 
         }
@@ -75,7 +68,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -90,11 +83,11 @@ namespace WebApplication_MVC.Controllers
                 {
                     _User = new User()
                     {
-                        FirstName = _User.FirstName,
-                        LastName = _User.LastName,
-                        Email = _User.Email,
+                        FirstName = _User.FirstName.Trim(),
+                        LastName = _User.LastName.Trim(),
+                        Email = _User.Email.Trim(),
                         Password = _User.Password,
-                        Contact = _User.Contact,
+                        Contact = _User.Contact.Trim(),
                         Role = 2,
                         IsActive = 1,
                         CreatedAt = DateTime.Now
@@ -104,16 +97,16 @@ namespace WebApplication_MVC.Controllers
                     {
                         return RedirectToAction("Login", "Auth", new { msg = "Sign up successful" });
                     }
-                    if (checkUser == false)
+                    else
                     {
-                        return RedirectToAction("SignUp", "Auth", new { msg = "error catch email already exist" });
+                        return RedirectToAction("SignUp", "Auth", new { msg = "error catch something wrong-" });
                     }
                 }
                 return RedirectToAction("SignUp", "Auth", new { msg = "email already exist" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = " Error Page" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
         }
@@ -124,13 +117,20 @@ namespace WebApplication_MVC.Controllers
             {
                 FormsAuthentication.SignOut();
                 Session.Abandon(); // it will clear the session at the end of request
-                return RedirectToAction("Login", "Auth", new { msg = "Logout From DashBoard" });
+                return RedirectToAction("Login", "Auth");
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = " Error Page" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
             }
 
+        }
+
+        //[HandleError]
+        public ActionResult Error(string msg = "")
+        {
+            ViewBag.msg = msg;
+            return View();
         }
     }
 }

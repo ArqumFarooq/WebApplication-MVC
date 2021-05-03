@@ -16,7 +16,9 @@
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="datatable-header">
                     @*<a href="@Url.Action("UseViewBook", "User")"><i class="icon-glyphicon-edit"></i> Search Book</a>*@
-                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
+                    
+
+                    @*<div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
                         <form action="@Url.Action("AdminViewUserBook","Admin")">
                             <div class="form-group">
                                 <label>Search Book:</label>
@@ -31,7 +33,9 @@
                                 <button type="submit" class="btn btn-danger legitRipple align-items-lg-center ">Submit<i class="icon-arrow-right14 position-right"></i></button>
                             </div>
                         </form>
-                    </div>
+                    </div>*@
+                    
+
                 </div>
                 
                 <div class="content d-flex align-items-lg-center">
@@ -42,8 +46,9 @@
                                 <thead>
                                     <tr role="row">
                                         <th>Sr.No</th>
-                                        <th>First Name</th>
-                                        <th>Second Name</th>
+                                        <th>User Name</th>
+                                        @*<th>First Name</th>
+                                        <th>Second Name</th>*@
                                         <th>Title</th>
                                         <th>Author</th>
 
@@ -57,8 +62,7 @@
                                         i++;
                                         <tr role="row" class="odd">
                                             <td>@i</td>
-                                            <td>@item.User.FirstName</td>
-                                            <td>@item.User.LastName</td>
+                                            <td>@item.User.FirstName&nbsp;@item.User.LastName</td>
                                             <td>@item.Title</td>
                                             <td>@item.Auther</td>
 

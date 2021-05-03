@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebApplication_MVC.DAL;
 using WebApplication_MVC.Models;
 using WebApplication_MVC.ViewModel;
@@ -37,7 +35,14 @@ namespace WebApplication_MVC.BL
 
         public bool AddBook(Book _book, DatabaseEntities de)
         {
-            return new BookDAL().AddBook(_book, de);
+            if (_book.Title == "" || _book.Auther == "" || _book.Title == null || _book.Auther == null)
+            {
+                return false;
+            }
+            else
+            {
+                return new BookDAL().AddBook(_book, de);
+            }
         }
 
         public bool UpdateBook(Book _book, DatabaseEntities de)

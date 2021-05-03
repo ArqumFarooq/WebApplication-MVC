@@ -35,7 +35,7 @@
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="datatable-header">
                     @*<a href="@Url.Action("AdminSearchUser", "Admin")"><i class="icon-glyphicon-edit"></i> Search User</a>*@
-                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" " align="center">
+                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
 
                         @*@using (Html.BeginForm("Action", "Controller", new { FU = "bar" }, FormMethod.POST, new { ID = "MyID", onsubmit = "return sayHello()" }))*@
                         @*<form action="/Controller/Action?FU=Hello" method="post" id="MyID" onsumbit="return sayHello()">*@
@@ -45,10 +45,14 @@
                                 <div class="form-group">
                                     <label>Search User:</label>
                                     <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
-                                        @foreach (var item in Model)
+                                        @foreach (var item in ViewBag.allUser)
                                         {
                                             <option value="@item.Id">@item.FirstName</option>
                                         }
+                                        @*@foreach (var item in Model)
+                                        {
+                                            <option value="@item.Id">@item.FirstName</option>
+                                        }*@
                                     </select>
                                 </div>
                                 <div class="text-right">
@@ -96,9 +100,9 @@
                                                             <i class="icon-menu9"></i>
                                                         </a>
                                                         <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li><a href="@Url.Action("AdminEditUser", "Admin", new {id = item.Id})"><i class="icon-glyphicon-edit"></i> Edit User</a></li>
+                                                            <li><a href="@Url.Action("AdminEditUser", "Admin", new {id = item.Id})"><i class="glyphicon glyphicon-edit"></i> Edit User</a></li>
                                                             <li><a href="@Url.Action("AdminViewUserBook", "Admin", new {id = item.Id})"><i class="icon-search4"></i> view User Books</a></li>
-                                                            <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="icon-glyphicon-trash"></i> Delete User</a></li>
+                                                            <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-trash"></i> Delete User</a></li>
                                                         </ul>
                                                     </li>
                                                 </ul>
