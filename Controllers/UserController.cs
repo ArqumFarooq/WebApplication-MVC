@@ -42,11 +42,11 @@ namespace WebApplication_MVC.Controllers
                     ViewBag.TotalBooks = viewdata.Count;
                     return View(data);
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
             }
 
         }
@@ -62,11 +62,11 @@ namespace WebApplication_MVC.Controllers
                     ViewBag.User = user;
                     return View();
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
             }
 
         }
@@ -78,7 +78,7 @@ namespace WebApplication_MVC.Controllers
             {
                 if (Session["UserID"] == null)
                 {
-                    RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 if (Session["Role"].ToString() == "2")
                 {
@@ -96,53 +96,75 @@ namespace WebApplication_MVC.Controllers
                         return RedirectToAction("UserDashBoard", "User", new { msg = "Profile updated Unsuccessfully" });
                     }
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
             }
-            
+
         }
 
-        public ActionResult UserViewBook(String msg = "")
-            {
+        public ActionResult UserViewBook(String msg = "", int id = -1)
+        {
             try
             {
                 ViewBag.msg = msg;
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 if (Session["Role"].ToString() == "2")
                 {
-                    List<Book> userslist = new BookBL().GetBookList(db);
-                    List<BookViewModel> data = new List<BookViewModel>();
-                    foreach (var book in userslist)
+                    if (id == -1)
                     {
-                        data.Add(new BookViewModel()
+                        List<Book> userslist = new BookBL().GetBookList(db);
+                        List<BookViewModel> data = new List<BookViewModel>();
+                        foreach (var book in userslist)
                         {
-                            UserId = book.UserId ?? 0,
-                            CreatedAt = book.CreatedAt,
-                            Auther = book.Auther,
-                            Id = book.Id,
-                            IsActive = book.IsActive,
-                            Title = book.Title
-                        });
+                            data.Add(new BookViewModel()
+                            {
+                                UserId = book.UserId ?? 0,
+                                CreatedAt = book.CreatedAt,
+                                Auther = book.Auther,
+                                Id = book.Id,
+                                IsActive = book.IsActive,
+                                Title = book.Title
+                            });
+                        }
+                        var i = Convert.ToInt32(Session["UserID"]);
+                        List<BookViewModel> viewdata = new BookBL().GetOnlyUserBookList(data, i);
+                        return View(viewdata);
                     }
-                    var i = Convert.ToInt32(Session["UserID"]);
-                    List<BookViewModel> viewdata = new BookBL().GetOnlyUserBookList(data, i);
-                    return View(viewdata);
+                    else
+                    {
+                        List<Book> userslist = new BookBL().GetBookList(db);
+                        List<BookViewModel> data = new List<BookViewModel>();
+                        foreach (var book in userslist)
+                        {
+                            data.Add(new BookViewModel()
+                            {
+                                UserId = book.UserId ?? 0,
+                                CreatedAt = book.CreatedAt,
+                                Auther = book.Auther,
+                                Id = book.Id,
+                                IsActive = book.IsActive,
+                                Title = book.Title
+                            });
+                        }
+                        var i = Convert.ToInt32(Session["UserID"]);
+                        List<BookViewModel> viewdata = new BookBL().GetOnlyUserBookList(data, i).Where(x => x.Id == id).ToList();
+                        return View(viewdata);
+                    }
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
             }
-
         }
-        
+
         [HttpPost]
         public ActionResult UseViewBook(int id)
         {
@@ -150,7 +172,7 @@ namespace WebApplication_MVC.Controllers
             {
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
 
                 if (Session["Role"].ToString() == "2")
@@ -175,7 +197,7 @@ namespace WebApplication_MVC.Controllers
                 ViewBag.msg = msg;
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 return View();
             }
@@ -193,7 +215,7 @@ namespace WebApplication_MVC.Controllers
             {
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 int bookTitletName = _book.Title.Length;
                 if (bookTitletName > 0)
@@ -235,14 +257,14 @@ namespace WebApplication_MVC.Controllers
                 ViewBag.msg = msg;
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 if (Session["Role"].ToString() == "2")
                 {
                     Book bookedit = new BookBL().GetUserIdForSearchBook(db, id);
                     return View(bookedit);
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
@@ -258,7 +280,7 @@ namespace WebApplication_MVC.Controllers
             {
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
                 int titleLength = _book.Title.Length;
                 int authorLength = _book.Auther.Length;
@@ -293,7 +315,7 @@ namespace WebApplication_MVC.Controllers
             {
                 return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
             }
-            
+
         }
 
         //[HttpGet]
@@ -357,7 +379,7 @@ namespace WebApplication_MVC.Controllers
         //    {
         //        return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
         //    }
-           
+
         //}
 
         public ActionResult UserDeleteBook(int id)
@@ -374,14 +396,14 @@ namespace WebApplication_MVC.Controllers
                     bool checkUser = new BookBL().DeleteBook(book, db);
                     if (checkUser == true)
                     {
-                        return RedirectToAction("UserViewBook", new{msg = "delete Book"});
+                        return RedirectToAction("UserViewBook", new { msg = "delete Book" });
                     }
                     else
                     {
                         return RedirectToAction("Login", "Auth", new { msg = "Wrong Operation" });
                     }
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {
@@ -396,7 +418,7 @@ namespace WebApplication_MVC.Controllers
             {
                 if (Session["UserID"] == null)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
                 }
 
                 if (Session["Role"].ToString() == "2")
@@ -405,7 +427,7 @@ namespace WebApplication_MVC.Controllers
                     db.SaveChanges();
                     return View("UserDashBoard");
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
+                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from USER DashBoard, plz login again" });
             }
             catch
             {

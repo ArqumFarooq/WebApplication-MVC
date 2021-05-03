@@ -11,8 +11,29 @@
         <div class="panel panel-flat">
             <div class="panel-heading">
                 <h5 class="panel-title text-center">User Book Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                <div>@ViewBag.msg</div>
             </div>
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="datatable-header">
+                    @*<a href="@Url.Action("UseViewBook", "User")"><i class="icon-glyphicon-edit"></i> Search Book</a>*@
+                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
+                        <form action="@Url.Action("AdminViewUserBook","Admin")">
+                            <div class="form-group">
+                                <label>Search Book:</label>
+                                <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
+                                    @foreach (var item in Model)
+                                    {
+                                        <option value="@item.Id">@item.Title</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-danger legitRipple align-items-lg-center ">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
                 <div class="content d-flex align-items-lg-center">
                     <div class="panel panel-flat">
 
@@ -29,21 +50,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @{
-                                        var i = 0;
-                                        foreach (Book item in ViewBag.booklist)
-                                        {
-                                            i++;
-                                            <tr role="row" class="odd">
-                                                <td>@i</td>
-                                                <td>@item.User.FirstName</td>
-                                                <td>@item.Auther</td>
-                                                <td>@item.Title</td>
-                                                <td>@item.Auther</td>
+                                @{
+                                    var i = 0;
+                                    foreach (Book item in ViewBag.booklist)
+                                    {
+                                        i++;
+                                        <tr role="row" class="odd">
+                                            <td>@i</td>
+                                            <td>@item.User.FirstName</td>
+                                            <td>@item.User.LastName</td>
+                                            <td>@item.Title</td>
+                                            <td>@item.Auther</td>
 
-                                            </tr>
-                                        }
+                                        </tr>
                                     }
+                                }
                                 </tbody>
                             </table>
                         </div>

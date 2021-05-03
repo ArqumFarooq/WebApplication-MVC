@@ -88,7 +88,7 @@
 
                                                 <div class="navigation-wrapper collapse" id="user-nav">
                                                     <ul class="navigation">
-                                                        <li><a href="@Url.Action("AdminProfile", "Admin", new {id = Session["UserID"], msg ="Admin Profile "})"><i class="icon-user-plus"></i> <span>Admin profile settings</span></a></li>
+                                                        <li><a href="@Url.Action("AdminProfile", "Admin", new {id = Session["UserID"], msg =""})"><i class="icon-user-plus"></i> <span>Admin profile settings</span></a></li>
                                                         <li class="divider"></li>
                                                         <li><a href="@Url.Action("Logout", "Auth")"><i class="icon-switch2"></i> <span>Logout</span></a></li>
                                                     </ul>
@@ -101,18 +101,18 @@
                                                     <ul class="navigation navigation-main navigation-accordion">
                                                         <!-- Main -->
                                                         <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-                                                        <li class="active"><a href="@Url.Action("AdminDashboard", "Admin", new { msg = "Admin Dashboard"})"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+                                                        <li class="active"><a href="@Url.Action("AdminDashboard", "Admin", new { msg = ""})"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
                                                         <li>
                                                             <a href="#"><i class="icon-stack2"></i> <span>User Management</span></a>
                                                             <ul>
-                                                                <li><a href="@Url.Action("AdminViewUser", "Admin" , new { msg = "View user"})">View User</a></li>
-                                                                <li><a href="@Url.Action("AdminAddUser", "Admin" , new { msg = "Add user"})">Create User</a></li>
+                                                                <li><a href="@Url.Action("AdminViewUser", "Admin" , new { msg = ""})">View User</a></li>
+                                                                <li><a href="@Url.Action("AdminAddUser", "Admin" , new { msg = ""})">Create User</a></li>
                                                             </ul>
                                                         </li>
                                                         <li>
                                                             <a href="#"><i class="icon-stack2"></i> <span>User-Book Management</span></a>
                                                             <ul>
-                                                                <li><a href="@Url.Action("AdminViewUserBook", "Admin" , new { msg = "View user Book"})">View User-Book</a></li>
+                                                                <li><a href="@Url.Action("AdminViewUserBook", "Admin" , new { msg = ""})">View User-Book</a></li>
                                                             </ul>
                                                         </li>
                                                         <!-- /main -->
@@ -155,12 +155,12 @@
                                                                     <ul class="navigation navigation-main navigation-accordion">
                                                                         <!-- Main -->
                                                                         <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-                                                                        <li class="active"><a href="@Url.Action("UserDashBoard", "User" , new { msg = "Student Dashboard"})"><i class="icon-home4"></i> <span>User Dashboard</span></a></li>
+                                                                        <li class="active"><a href="@Url.Action("UserDashBoard", "User" , new { msg = ""})"><i class="icon-home4"></i> <span>User Dashboard</span></a></li>
                                                                         <li>
                                                                             <a href="#"><i class="icon-stack2"></i> <span>Book Management</span></a>
                                                                             <ul>
-                                                                                <li><a href="@Url.Action("UserViewBook", "User" , new { msg = "View book"})">View Book</a></li>
-                                                                                <li><a href="@Url.Action("UserAddBook", "User" , new { msg = "add Book"})">Create Book</a></li>
+                                                                                <li><a href="@Url.Action("UserViewBook", "User" , new { msg = ""})">View Book</a></li>
+                                                                                <li><a href="@Url.Action("UserAddBook", "User" , new { msg = ""})">Create Book</a></li>
                                                                             </ul>
                                                                         </li>
                                                                         <!-- /main -->

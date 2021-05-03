@@ -24,23 +24,16 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path search" });
             }
 
         }
 
+        //[HandleError]
         public ActionResult Error(string msg = "")
         {
-            try
-            {
-                ViewBag.msg = msg;
-                return View();
-            }
-            catch
-            {
-                return View();
-            }
-
+            ViewBag.msg = msg;
+            return View();
         }
 
         [HttpPost]
@@ -48,6 +41,7 @@ namespace WebApplication_MVC.Controllers
         {
             try
             {
+                //throw new Exception();
                 User obj = new UserBL().ComparerUserEmailPassword(_User, db);
                 if (obj != null)
                 {
@@ -56,23 +50,11 @@ namespace WebApplication_MVC.Controllers
                     Session["UserEmail"] = obj.Email;
                     Session["Role"] = obj.Role.ToString();
                     var role = Session["Role"];
-                    try
+                    if (Equals(role, "1"))
                     {
-                        if (Equals(role, "1"))
-                        {
-                            return RedirectToAction("AdminDashBoard", "Admin", new { msg = "Login to Admin Dashboard" });
-                        }
-                        return RedirectToAction("UserDashBoard", "User", new { msg = "Login to User Dashboard" });
+                        return RedirectToAction("AdminDashBoard", "Admin", new { msg = "" });
                     }
-                    catch
-                    {
-                        return RedirectToAction("Login", new { msg = "Match not found" });
-                    }
-                    //if (Equals(role, "1"))
-                    //{
-                    //    return RedirectToAction("AdminDashBoard", "Admin", new { msg = "Login to Admin Dashboard" });
-                    //}
-                    //return RedirectToAction("UserDashBoard", "User", new { msg = "Login to User Dashboard" });
+                    return RedirectToAction("UserDashBoard", "User", new { msg = "" });
                 }
                 return RedirectToAction("Login", new { msg = "Match not found" });
             }
@@ -93,7 +75,7 @@ namespace WebApplication_MVC.Controllers
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
+                return RedirectToAction("Error", "Auth", new { msg = "wrong path" });
             }
 
         }
@@ -117,23 +99,23 @@ namespace WebApplication_MVC.Controllers
                         IsActive = 1,
                         CreatedAt = DateTime.Now
                     };
-                }
-                bool checkUser = new UserBL().AddUser(_User, db);
-                if (checkUser == true)
-                {
-                    return RedirectToAction("Login", "Auth", new { msg = "Sign up successful" });
-                }
-                if (checkUser == false)
-                {
-                    return RedirectToAction("SignUp", "Auth", new { msg = "error catch email already exist" });
+                    bool checkUser = new UserBL().AddUser(_User, db);
+                    if (checkUser == true)
+                    {
+                        return RedirectToAction("Login", "Auth", new { msg = "Sign up successful" });
+                    }
+                    if (checkUser == false)
+                    {
+                        return RedirectToAction("SignUp", "Auth", new { msg = "error catch email already exist" });
+                    }
                 }
                 return RedirectToAction("SignUp", "Auth", new { msg = "email already exist" });
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new {msg = " Error Page"});
+                return RedirectToAction("Error", "Auth", new { msg = " Error Page" });
             }
-            
+
         }
 
         public ActionResult Logout()
@@ -144,9 +126,9 @@ namespace WebApplication_MVC.Controllers
                 Session.Abandon(); // it will clear the session at the end of request
                 return RedirectToAction("Login", "Auth", new { msg = "Logout From DashBoard" });
             }
-            catch 
+            catch
             {
-                return RedirectToAction("Error", "Auth", new {msg = " Error Page"});
+                return RedirectToAction("Error", "Auth", new { msg = " Error Page" });
             }
 
         }

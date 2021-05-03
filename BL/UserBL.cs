@@ -61,7 +61,7 @@ namespace WebApplication_MVC.BL
 
         public bool AddUser(User _user, DatabaseEntities de)
         {
-            if (_user.FirstName == "" || _user.Email == "" || _user.Password == "" || _user.FirstName == null || _user.Email == null || _user.Password == null)
+            if (_user.FirstName == "" ||_user.LastName == "" ||_user.Contact == "" || _user.Email == "" || _user.Password == "" || _user.FirstName == null || _user.LastName == null ||_user.Contact == null || _user.Email == null || _user.Password == null)
             {
                 return false;
             }
@@ -73,7 +73,7 @@ namespace WebApplication_MVC.BL
 
         public bool UpdateUser(User _user, DatabaseEntities de)
         {
-            if (_user.FirstName == "" || _user.LastName == "" || _user.Email == "" || _user.Password == "" || _user.FirstName == null || _user.LastName == null || _user.Email == null || _user.Password == null)
+            if (_user.FirstName == "" ||_user.LastName == "" ||_user.Contact == "" || _user.Email == "" || _user.Password == "" || _user.FirstName == null || _user.LastName == null ||_user.Contact == null || _user.Email == null || _user.Password == null)
             {
                 return false;
             }

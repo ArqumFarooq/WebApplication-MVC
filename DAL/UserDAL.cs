@@ -50,7 +50,7 @@ namespace WebApplication_MVC.DAL
 
         public User ComparerUserEmailPassword(User _user, DatabaseEntities de)
         {
-            return de.Users.Where(x => String.Equals(x.Email.ToLower(), _user.Email.ToLower()) && String.Equals(x.Password, _user.Password)).FirstOrDefault();
+            return de.Users.Where(x => String.Equals(x.Email, _user.Email) && String.Equals(x.Password, _user.Password)).FirstOrDefault();
         }
 
         public bool AddUser(User _user, DatabaseEntities de)

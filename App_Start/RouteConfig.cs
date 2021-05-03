@@ -18,6 +18,13 @@ namespace WebApplication_MVC
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Auth", action = "Login", id = UrlParameter.Optional }
             );
+
+            //routes.MapRoute(
+            //name: "CatchAll",
+            //url: "{controller}/{action}/{id}",
+            //url:= "{*any}", _
+            //defaults: new { controller = "auth", action = "Error", id = UrlParameter.Optional }
+            //    );
         }
     }
 }
