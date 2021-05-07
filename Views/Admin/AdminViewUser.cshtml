@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication_MVC.Models.User>
+﻿@using WebApplication_MVC.Models
 @{
     ViewBag.Title = "AdminViewUser";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,14 +7,12 @@
 <div class="modal" id="deleteModal">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title text-center">Do You Want to Delete??</h4>
                 <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
 
             </div>
-
             <!-- Modal footer -->
             <div class="modal-footer text-center">
                 <a class="btn btn-primary" id="deleteId">Yes</a>
@@ -29,97 +27,87 @@
     <div class="content d-flex align-items-lg-center">
         <div class="panel panel-flat">
             <div class="panel-heading">
-                <div>@ViewBag.msg</div>
+                <div style="color: @ViewBag.color">@ViewBag.msg</div>
                 <h5 class="panel-title text-center"> User Record Table<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
             </div>
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="datatable-header">
-                    @*<a href="@Url.Action("AdminSearchUser", "Admin")"><i class="icon-glyphicon-edit"></i> Search User</a>*@
-                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
-
-                        @*@using (Html.BeginForm("Action", "Controller", new { FU = "bar" }, FormMethod.POST, new { ID = "MyID", onsubmit = "return sayHello()" }))*@
-                        @*<form action="/Controller/Action?FU=Hello" method="post" id="MyID" onsumbit="return sayHello()">*@
-                        
-                        
-                        <form action="@Url.Action("AdminViewUser", "Admin")">
-                                <div class="form-group">
-                                    <label>Search User:</label>
-                                    <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
-                                        @foreach (var item in ViewBag.allUser)
-                                        {
-                                            <option value="@item.Id">@item.FirstName</option>
-                                        }
-                                        @*@foreach (var item in Model)
-                                        {
-                                            <option value="@item.Id">@item.FirstName</option>
-                                        }*@
-                                    </select>
-                                </div>
-                                <div class="text-right">
-                                    <button type="submit" class="btn btn-danger legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>
-                                </div>
-                            </form>
-                    </div>
-                </div>
-                <br>
-                <br>
-                <div class="content d-flex align-items-lg-center">
-                    <div class="panel panel-flat">
-                        <div class="panel-heading">
-                            <h5 class="panel-title" align="center" >User Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
+                   <form action="@Url.Action("AdminViewUser", "Admin")">
+                        <div class="row">
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Name" type="text" name="Name" class="form-control" placeholder="Type to Search Name:..." />
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Email"  type="email" name="Email" class="form-control" placeholder="Type to Search Email:..." />
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Contact" type="text" name="Contact" class="form-control" placeholder="Type to Search Contact:..." />
+                            </div>
                         </div>
-                        <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
-                            <thead>
-                                <tr role="row">
-                                    <th>Sr.No</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Contact</th>
-                                    <th>Total Books</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{
-                                    var i = 0;
-                                    foreach (var item in Model)
-                                    {
-                                        i++;
-                                        <tr role="row" class="odd">
-                                            <td>@i</td>
-                                            <td>@item.FirstName</td>
-                                            <td>@item.LastName</td>
-                                            <td>@item.Contact</td>
-                                            <td>@item.Books.Where(x=>x.IsActive == 1).Count()</td>
-                                            <td>@item.Email </td>
-                                            <td class="text-center">
-                                                <ul class="icons-list">
-                                                    <li class="dropdown">
-                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-                                                        <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li><a href="@Url.Action("AdminEditUser", "Admin", new {id = item.Id})"><i class="glyphicon glyphicon-edit"></i> Edit User</a></li>
-                                                            <li><a href="@Url.Action("AdminViewUserBook", "Admin", new {id = item.Id})"><i class="icon-search4"></i> view User Books</a></li>
-                                                            <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-trash"></i> Delete User</a></li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2">
+                                <button type="submit" class="btn btn-danger legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="content d-flex align-items-lg-center">
+                <div class="panel panel-flat">
+                    <div class="panel-heading">
+                        <h5 class="panel-title" align="center">User Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
                     </div>
-
+                    <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                        <thead>
+                            <tr role="row">
+                                <th>Sr.No</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Contact</th>
+                                <th>Total Books</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var i = 0;
+                                foreach (User item in ViewBag.userlist)
+                                {
+                                    i++;
+                                    <tr role="row" class="odd">
+                                        <td>@i</td>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.Contact</td>
+                                        <td>@item.Books.Count</td>
+                                        <td>@item.Email </td>
+                                        <td class="text-center">
+                                            <ul class="icons-list">
+                                                <li class="dropdown">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="icon-menu9"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu-right">
+                                                        <li><a href="@Url.Action("AdminEditUser", "Admin", new {id = item.Id})"><i class="glyphicon glyphicon-edit"></i> Edit User</a></li>
+                                                        <li><a href="@Url.Action("AdminViewUserBook", "Admin", new {id = item.Id})"><i class="icon-search4"></i> view User Books</a></li>
+                                                        <li><a onclick="deleteFunction(@item.Id)" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-trash"></i> Delete User</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 
 <script>

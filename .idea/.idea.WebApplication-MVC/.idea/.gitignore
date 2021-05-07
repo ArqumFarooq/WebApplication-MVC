@@ -1,0 +1,13 @@
+﻿# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/modules.xml
+/contentModel.xml
+/projectSettingsUpdater.xml
+/.idea.WebApplication-MVC.iml
+# Datasource local storage ignored files
+/../../../../../../../:\Workspace\WebApplication-MVC\WebApplication-MVC\.idea\.idea.WebApplication-MVC\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/

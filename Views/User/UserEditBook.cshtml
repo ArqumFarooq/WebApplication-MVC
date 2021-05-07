@@ -1,4 +1,4 @@
-﻿@model WebApplication_MVC.Models.Book
+﻿@*@model WebApplication_MVC.Models.Book*@
 
 @{
     ViewBag.Title = "UserEditBook";
@@ -11,23 +11,23 @@
             <form action="@Url.Action("PostUserEditBook","User")" method="post">
                 <div class="panel panel-flat">
                     <div class="panel-heading">
-                        <div>@ViewBag.msg</div>
+                        <div style="color: @ViewBag.color">@ViewBag.msg</div>
                         <h5 class="panel-title">Edit Book<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
-                            <input type="hidden" class="form-control" value="@Model.Id" name="id" readonly>
+                            <input type="hidden" class="form-control" value="@ViewBag.Book.Id" name="id" readonly>
                         </div>
                         <div class="form-group">
-                            <input type="hidden" class="form-control" value="@Model.UserId" name="UserId" readonly>
+                            <input type="hidden" class="form-control" value="@ViewBag.Book.UserId" name="UserId" readonly>
                         </div>
                         <div class="form-group">
                             <label>Title:</label>
-                            <input type="text" class="form-control" value="@Model.Title" name="Title">
+                            <input type="text" class="form-control" value="@ViewBag.Book.Title" name="Title">
                         </div>
                         <div class="form-group">
                             <label>Author:</label>
-                            <input type="text" class="form-control" value="@Model.Auther" name="Auther">
+                            <input type="text" class="form-control" value="@ViewBag.Book.Auther" name="Auther">
                         </div>
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>

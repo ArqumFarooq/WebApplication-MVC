@@ -1,58 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApplication_MVC.BL;
 using WebApplication_MVC.Models;
-using WebApplication_MVC.ViewModel;
+using WebApplication_MVC.Helping_Classes;
 
 namespace WebApplication_MVC.Controllers
 {
     public class AdminController : Controller
     {
+        SessionDTO sdto = new SessionDTO();
+        GeneralPurpose gp = new GeneralPurpose();
         private readonly DatabaseEntities db = new DatabaseEntities();
 
+        public bool ValidateLogin()
+        {
+            if(sdto.getEmail() != null)
+            {
+                if(sdto.getRole() == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         // GET: Admin
-        public ActionResult AdminDashboard(string msg = "")
+        public ActionResult AdminDashboard(string msg = "", string color = "black")
         {
             try
             {
-                ViewBag.msg = msg;
-                if (Session["UserID"] != null && (Session["Role"]).ToString() == "1")
+                if(ValidateLogin() == false)
                 {
-                    List<Book> datebook = new BookBL().GetBookList(db);
-                    ViewBag.TotalBooks = datebook.Count;
-                    List<User> userdata = new UserBL().GetActiveUserListWhereNoAdmin(db);
-                    ViewBag.TotalUsers = userdata.Count;
-                    return View();
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+
+                int userCount = new UserBL().GetActiveUserList(db).Where(x=> x.Role != 1).Count();
+                int bookCount = new BookBL().GetActiveBookList(db).Count();
+                
+                ViewBag.TotalUsers = userCount;
+                ViewBag.TotalBooks = bookCount;
+                ViewBag.msg = msg;
+                ViewBag.color = color;
+                return View();
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
 
-        public ActionResult AdminProfile(int id, string msg = "")
+        public ActionResult AdminProfile(int id, string msg = "", string color = "black")
         {
             try
             {
-                ViewBag.msg = msg;
-                if (Session["UserID"] != null && (Session["Role"]).ToString() == "1")
+                if (ValidateLogin() == false)
                 {
-                    User admin = new BookBL().GetUserIdForProfileUpdate(db, id);
-                    ViewBag.User = admin;
-                    return View();
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                
+                User admin = new UserBL().GetUserById(id, db);
+                ViewBag.User = admin;
+                ViewBag.msg = msg;
+                ViewBag.color = color;
+                return View();
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
@@ -62,122 +86,92 @@ namespace WebApplication_MVC.Controllers
         {
             try
             {
-                if (Session["UserID"] == null)
+                if (ValidateLogin() == false)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = " Session Expired from ADMIN DashBoard, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                if (Session["Role"].ToString() == "1")
+                bool chkEmail = gp.ValidateEmail(_user.Email, _user.Id);
+                if (chkEmail == false)
                 {
-                    if (_user != null)
-                    {
-                        int emailCount = new UserBL().GetActiveUserList(db).Where(x=> x.Email.ToLower() == _user.Email.ToLower() && x.Id != _user.Id).Count();
-                        if (emailCount == 0)
-                        {
-                            User updateAdmin = new UserBL().GetUserById(_user.Id, db);
-                            updateAdmin.FirstName = _user.FirstName.Trim();
-                            updateAdmin.LastName = _user.LastName.Trim();
-                            updateAdmin.Contact = _user.Contact.Trim();
-                            updateAdmin.Password = _user.Password.Trim();
-                            updateAdmin.Email = _user.Email.Trim();
-                            bool checkUser = new UserBL().UpdateUser(updateAdmin, db);
-                            if (checkUser == true)
-                            {
-                                Session["UserName"] = _user.FirstName + _user.LastName;
-                                return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated successfully" });
-                            }
-                            else
-                            {
-                                return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated Unsuccessfully bcz yoy enter empty name or maybe same email which exist in DB" });
-                            }
-                        }
-                        else
-                        {
-                            return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated Unsuccessfully either you enter the existent email" });
-                        }
-                    }
+                    return RedirectToAction("AdminProfile", "Admin", new { id = _user.Id, msg = "Emaial exists", color = "Red" });
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again " });
+                User updateAdmin = new UserBL().GetUserById(_user.Id, db);
+                updateAdmin.FirstName = _user.FirstName.Trim();
+                updateAdmin.LastName = _user.LastName.Trim();
+                updateAdmin.Contact = _user.Contact.Trim();
+                updateAdmin.Password = _user.Password.Trim();
+                updateAdmin.Email = _user.Email.Trim();
+                bool checkUser = new UserBL().UpdateUser(updateAdmin, db);
+                if (checkUser == true)
+                {
+                    return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated successfully", color = "green" });
+                }
+                else
+                {
+                    return RedirectToAction("AdminDashboard", "Admin", new { msg = "Profile updated Unsuccessfully bcz yoy enter empty name or maybe same email which exist in DB", color = "Red" });
+                }
+                
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
 
-        public ActionResult AdminViewUser(string msg = "", int id = -1)
-        {
+        public ActionResult AdminViewUser(string msg = "", string color = "black", string Name = "", string Email="", string Contact="") {
             try
             {
+                if (ValidateLogin() == false)
+                {
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
+                }
+
+                List<User> userslist = new UserBL().GetActiveUserList(db).Where( x=> x.Role != 1).ToList();
+                int bookCount = new BookBL().GetActiveBookList(db).Count();
+                if (Name != "")
+                {
+                    userslist = userslist.Where(x => x.FirstName.ToLower().Contains(Name.ToLower()) || x.LastName.ToLower().Contains(Name.ToLower())).ToList();
+                }
+                if (Email != "")
+                {
+                    userslist = userslist.Where(x => x.Email.ToLower().Contains(Email.ToLower())).ToList();
+                }
+                if (Contact != "")
+                {
+                    userslist = userslist.Where(x => x.Contact.ToLower().Contains(Contact.ToLower())).ToList();
+                }
+           
                 ViewBag.msg = msg;
-                if (Session["UserID"] == null)
-                {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-                }
-                if (Session["Role"].ToString() == "1")
-                {
-                    if (id == -1)
-                    {
-                        List<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db);
-                        ViewBag.allUser = userslist;
-                        return View(userslist);
-                    }
-                    else
-                    {
-                        IEnumerable<User> userslist = new UserBL().GetActiveUserListWhereNoAdmin(db).Where(x => x.Id == id);
-                        List<User> allUserslist = new UserBL().GetActiveUserListWhereNoAdmin(db); ;
-                        ViewBag.allUser = allUserslist;
-                        return View(userslist);
-                    }
-                }
+                ViewBag.color = color;
+                ViewBag.userlist = userslist;
+                ViewBag.Name = Name;
+                ViewBag.Email = Email;
+                ViewBag.Contact = Contact;
 
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-            }
-            catch
-            {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
-            }
-        }
-
-        [HttpPost]
-        public ActionResult AdminViewUse(int id, string msg = "")
-        {
-            try
-            {
-                ViewBag.msg = msg;
-                if (Session["UserID"] == null)
-                {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-                }
-                if (Session["Role"].ToString() == "1")
-                {
-                    User userlist = new UserBL().PostAdminSearchUser(db, id);
-                    return View(userlist);
-                }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-            }
-            catch
-            {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
-            }
-
-        }
-
-        [HttpGet]
-        public ActionResult AdminAddUser(string msg = "")
-        {
-            try
-            {
-                ViewBag.msg = msg;
-                if (Session["UserID"] == null)
-                {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-                }
                 return View();
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
+            }
+        }
+
+        public ActionResult AdminAddUser(string msg = "", string color = "black")
+        {
+            try
+            {
+                if (ValidateLogin() == false)
+                {
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
+                }
+                ViewBag.color = color;
+                ViewBag.msg = msg;
+                return View();
+            }
+            catch
+            {
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
         }
 
@@ -186,294 +180,199 @@ namespace WebApplication_MVC.Controllers
         {
             try
             {
-                if (Session["UserID"] == null)
+                if (ValidateLogin() == false)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                int userFirstName = _user.FirstName.Length;
-                User check = new UserBL().AdminAddUser(db, _user);
-                if (userFirstName > 0 && check == null)
+
+                bool chkEmail = gp.ValidateEmail(_user.Email);
+                if (chkEmail == false)
                 {
-                    if (Session["Role"].ToString() == "1")
-                    {
-                        _user.Role = 2;
-                        _user.IsActive = 1;
-                        _user.CreatedAt = DateTime.Now;
-                        bool checkUser = new UserBL().AddUser(_user, db);
-                        if (checkUser == true)
-                        {
-                            ViewData["res"] = "visibility:visible;";
-                            return View("AdminAddUser");
-                        }
-                        else
-                        {
-                            ViewData["nerr"] = "User Record is empty or the email you enter is exist in DataBase";
-                            return View("AdminAddUser");
-                        }
-                    }
+                    return RedirectToAction("AdminAddUser", "Admin", new { msg = "Emaial exists", color = "Red" });
                 }
-                ViewData["nerr"] = "User Record is empty or the email you enter is exist in DataBase";
-                return View("AdminAddUser");
+
+                User addAdmin = new User();
+                addAdmin.FirstName = _user.FirstName.Trim();
+                addAdmin.LastName = _user.LastName.Trim();
+                addAdmin.Contact = _user.Contact.Trim();
+                addAdmin.Password = _user.Password.Trim();
+                addAdmin.Email = _user.Email.Trim();
+                addAdmin.Role = 2;
+                addAdmin.IsActive = 1;
+                addAdmin.CreatedAt = DateTime.Now;
+
+                bool checkUser = new UserBL().AddUser(addAdmin, db);
+                if (checkUser == true)
+                {
+                    return RedirectToAction("AdminAddUser", "Admin", new { msg = "The user has been added successfully", color = "green" });
+                }
+                else
+                {
+                    return RedirectToAction("AdminAddUser", "Admin", new { msg = "Somethings' Wrong", color = "Red" });
+                }
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
 
-        [HttpGet]
-        public ActionResult AdminEditUser(int id, string msg = "")
+        public ActionResult AdminEditUser(int id, string msg = "", string color = "black")
         {
             try
             {
+                if (ValidateLogin() == false)
+                {
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
+                }
+
+                User empedit = new UserBL().GetUserById(id, db);
+
+                ViewBag.user = empedit;
                 ViewBag.msg = msg;
-                if (Session["UserID"] == null)
-                {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
-                }
-                if (Session["Role"].ToString() == "1")
-                {
-                    User empedit = new UserBL().PostAdminSearchUser(db, id);
-                    return View(empedit);
-                }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again " });
+                ViewBag.color = color;
+                return View();
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
 
         [HttpPost]
-        [ActionName("AdminEditUser")]
         public ActionResult PostAdminEditUser(User _user)
         {
             try
             {
-                if (Session["UserID"] == null)
+                if (ValidateLogin() == false)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                int a = _user.FirstName.Length;
-                if (a > 0)
+
+                bool chkEmail = gp.ValidateEmail(_user.Email, _user.Id);
+                if (chkEmail == false)
                 {
-                    if (Session["Role"].ToString() == "1")
-                    {
-                        _user.Role = 2;
-                        _user.IsActive = 1;
-                        _user.CreatedAt = DateTime.Now;
-                        bool checkUser = new UserBL().UpdateUser(_user, db);
-                        if (checkUser == true) { return RedirectToAction("AdminViewUser", new { msg = "User has been Edited" }); }
-                        ViewData["nerr1"] = "not null";
-                        AdminEditUser(_user.Id);
-                    }
+                    return RedirectToAction("AdminEditUser", "Admin", new { msg = "Emaial exists", color = "Red" });
                 }
-                ViewData["nerr1"] = "not null";
-                AdminEditUser(_user.Id);
-                return View();
+
+                User updateAdmin = new UserBL().GetUserById(_user.Id, db);
+                updateAdmin.FirstName = _user.FirstName.Trim();
+                updateAdmin.LastName = _user.LastName.Trim();
+                updateAdmin.Contact = _user.Contact.Trim();
+                updateAdmin.Password = _user.Password.Trim();
+                updateAdmin.Email = _user.Email.Trim();
+                
+                bool checkUser = new UserBL().UpdateUser(updateAdmin, db);
+                
+                if (checkUser == true)
+                {
+                    return RedirectToAction("AdminViewUser", new { msg = "User has been Edited", color = "green" });
+                }
+                else
+                {
+                    return RedirectToAction("AdminEditUser", new { msg = "User has not been Edited cuz either you enter any empty/Null Value or Email you enter exist in DB", color = "Red" });
+                }
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found ", color = "Red" });
             }
 
         }
-
-        //[HttpGet]
-        //public ActionResult AdminSearchUser(string msg = "")
-        //{
-        //    try
-        //    {
-        //        ViewBag.msg = msg;
-        //        if (Session["UserID"] == null)
-        //        {
-        //            return RedirectToAction("Login", "Auth");
-        //        }
-
-        //        if (Session["Role"].ToString() == "1")
-        //        {
-        //            //List<User> userlist = db.Users.Where(x => x.Role != 1).ToList();
-        //            List<User> userlist = new UserBL().GetActiveUserListWhereNoAdmin(db);
-        //            return View(userlist);
-        //        }
-        //        return RedirectToAction("Login", "Auth", new { msg = "Session over" });
-        //    }
-        //    catch
-        //    {
-        //        return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
-        //    }
-
-        //}
-
-        //[HttpPost]
-        //public ActionResult PostAdminSearchUser(int id)
-        //{
-        //    try
-        //    {
-        //        if (Session["UserID"] == null)
-        //        {
-        //            return RedirectToAction("Login", "Auth", new { msg = "Session over" });
-        //        }
-        //        if (Session["Role"].ToString() == "1")
-        //        {
-        //            User userlist = new UserBL().PostAdminSearchUser(db, id);
-        //            return View(userlist);
-        //        }
-        //        return RedirectToAction("Login", "Auth", new { msg = "Session over" });
-        //    }
-        //    catch
-        //    {
-        //        return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
-        //    }
-
-        //}
 
         public ActionResult AdminDeleteUser(int id)
         {
             try
             {
-                if (Session["UserID"] == null)
+                if (ValidateLogin() == false)
                 {
-                    RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-                if (Session["Role"].ToString() == "1")
-                {
-                    User user = new UserBL().GetUserId(db, id);
-                    //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1 && x.UserId == id).ToList();
-                    List<Book> usersbBookslist =  new BookBL().GetBookList(db).Where(x=> x.UserId == id).ToList();
-                    ViewBag.BookList = usersbBookslist;
-                    List<BookViewModel> data = new List<BookViewModel>();
-                    foreach (Book book in usersbBookslist)
-                    {
 
-                        book.UserId = book.UserId;
-                        book.CreatedAt = book.CreatedAt;
-                        book.Auther = book.Auther;
-                        book.Id = book.Id;
-                        book.IsActive = 0;
-                        book.Title = book.Title;
-                        new BookBL().DeleteBook(book, db);
-                    }
-                    bool checkUser = new UserBL().DeleteUser(user, db);
-                    if (checkUser == true)
-                    {
-                        return RedirectToAction("AdminViewUser", new { msg = " User has been deleted" });
-                    }
-                    else
-                    {
-                        return RedirectToAction("Login", "Auth", new { msg = "Wrong Operation OR Session Expired from ADMIN DashBoard, plz login again" });
-                    }
+                User user = new UserBL().GetUserById(id, db);
+                user.IsActive = 0;
+                
+                List<Book> Bookslist = new BookBL().GetActiveBookList(db).Where(x => x.UserId == id).ToList();
+                
+                foreach (Book book in Bookslist)
+                {
+                    book.IsActive = 0;
+                    
+                    bool chkbook = new BookBL().UpdateBook(book, db);
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+
+                bool checkUser = new UserBL().UpdateUser(user, db);
+                if (checkUser == true)
+                {
+                    return RedirectToAction("AdminViewUser", new { msg = " User has been deleted", color = "green" });
+                }
+                else
+                {
+                    return RedirectToAction("AdminViewUser", "Admin", new { msg = "Somethings' Wrong", color = "Red" });
+                }
+                
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found" });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found", color = "Red" });
             }
 
         }
 
-        //public ActionResult AdminViewUserBook()
-        //{
-        //    try
-        //    {
-        //        if (Session["UserID"] == null)
-        //        {
-        //            return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
-        //        }
-
-        //        if ((Session["Role"]).ToString() == "1")
-        //        {
-        //            List<Book> usersbBookslist = new BookBL().GetBookList(db);
-        //            ViewBag.BookList = usersbBookslist;
-        //            List<BookViewModel> data = new List<BookViewModel>();
-        //            foreach (var book in usersbBookslist)
-        //            {
-        //                data.Add(new BookViewModel()
-        //                {
-        //                    UserId = book.UserId ?? 0,
-        //                    CreatedAt = book.CreatedAt,
-        //                    Auther = book.Auther,
-        //                    Id = book.Id,
-        //                    IsActive = book.IsActive,
-        //                    Title = book.Title
-        //                });
-        //            }
-        //            var i = Convert.ToInt32(Session["UserID"]);
-        //            List<BookViewModel> viewdata = data.Where(x => x.UserId == Convert.ToInt32(Session["UserID"])).ToList();
-        //            //List<Book>viewdata = new BookBL().GetOnlyUserBookList(db, i);
-        //            return View(viewdata);
-        //        }
-        //        return RedirectToAction("Login", "Auth", new { msg = "Session Expired, plz login again" });
-        //    }
-        //    catch
-        //    {
-        //        return RedirectToAction("Error", "Auth", new { msg = "wrong path " });
-        //    }
-
-        //}
-        public ActionResult AdminViewUserBook(int id = -1)
+        public ActionResult AdminViewUserBook(string Name = "", string Title="", string Author="" , int id = -1)
         {
             try
             {
-                if (Session["UserID"] == null)
+                if (ValidateLogin() == false)
                 {
-                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                    return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again", color = "Red" });
                 }
-
-                if ((Session["Role"]).ToString() == "1")
-                {
-                    if (id == -1)
+                if(id == -1){
+                    List<Book> bookList = new BookBL().GetActiveBookList(db).ToList();
+                    if (Name != "")
                     {
-                        //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1).ToList();
-                        List<Book> usersbBookslist =  new BookBL().GetBookList(db);
-                        ViewBag.BookList = usersbBookslist;
-                        var data = new List<BookViewModel>();
-                        foreach (var book in usersbBookslist)
-                        {
-                            data.Add(new BookViewModel()
-                            {
-                                UserId = book.UserId ?? 0,
-                                CreatedAt = book.CreatedAt,
-                                Auther = book.Auther,
-                                Id = book.Id,
-                                IsActive = book.IsActive,
-                                Title = book.Title
-                            });
-                        }
-                        List<BookViewModel> viewdata = data.Where(x => x.UserId == Convert.ToInt32(Session["UserID"]) && x.IsActive == 1).ToList();
-                        return View(viewdata);
+                        bookList = bookList.Where(x => x.User.FirstName.ToLower().Contains(Name.ToLower()) || x.User.LastName.ToLower().Contains(Name.ToLower())).ToList();
                     }
-                    else
+                    if (Title != "")
                     {
-                        //List<Book> usersbBookslist = db.Books.Where(x => x.IsActive == 1 && x.UserId == id).ToList();
-                        List<Book> usersbBookslist = new BookBL().GetBookList(db).Where(x => x.UserId == id).ToList();
-                        ViewBag.BookList = usersbBookslist;
-                        var data = new List<BookViewModel>();
-                        foreach (var book in usersbBookslist)
-                        {
-                            data.Add(new BookViewModel()
-                            {
-                                UserId = book.UserId ?? 0,
-                                CreatedAt = book.CreatedAt,
-                                Auther = book.Auther,
-                                Id = book.Id,
-                                IsActive = book.IsActive,
-                                Title = book.Title
-                            });
-                        }
-                        //List<BookViewModel> viewdata = data.Where(x => x.UserId == Convert.ToInt32(Session["UserID"]) && x.IsActive == 1 && x.Id == id).ToList();
-                        List<BookViewModel> viewdata = data.Where(x => x.IsActive == 1).ToList();
-                        return View(viewdata);
+                        bookList = bookList.Where(x => x.Title.ToLower().Contains(Title.ToLower())).ToList();
                     }
+                    if (Author != "")
+                    {
+                        bookList = bookList.Where(x => x.Auther.ToLower().Contains(Author.ToLower())).ToList();
+                    }
+                    ViewBag.Book = bookList;
+                    ViewBag.Name = Name;
+                    ViewBag.Title = Title;
+                    ViewBag.Author = Author;
+                    return View();
                 }
-                return RedirectToAction("Login", "Auth", new { msg = "Session Expired from ADMIN DashBoard, plz login again" });
+                else{
+                    List<Book> bookList = new BookBL().GetActiveBookList(db).Where(x=> x.UserId == id).ToList();
+                    if (Name != "")
+                    {
+                        bookList = bookList.Where(x => x.User.FirstName.ToLower().Contains(Name.ToLower()) || x.User.LastName.ToLower().Contains(Name.ToLower())).ToList();
+                    }
+                    if (Title != "")
+                    {
+                        bookList = bookList.Where(x => x.Title.ToLower().Contains(Title.ToLower())).ToList();
+                    }
+                    if (Author != "")
+                    {
+                        bookList = bookList.Where(x => x.Auther.ToLower().Contains(Author.ToLower())).ToList();
+                    }
+                    ViewBag.Book = bookList;
+                    ViewBag.Name = Name;
+                    ViewBag.Title = Title;
+                    ViewBag.Author = Author;
+                    return View();
+                }
             }
             catch
             {
-                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found " });
+                return RedirectToAction("Error", "Auth", new { msg = "search for the page was not found ", color = "Red" });
             }
 
         }

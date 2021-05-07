@@ -4,11 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 align="center">AdminDashboard</h2>
-<br/><br/><br/>
-    <h6 class="content-group text-semibold">
-        <div>@ViewBag.msg</div>
-    </h6>
+<h2 align="center">
+    AdminDashboard
+    <div style="color: @ViewBag.color">@ViewBag.msg</div>
+</h2>
+<br/>
+<br/>
+<br/>
 <div class="container">
     <div class="row">
         <div class="col-md-6">

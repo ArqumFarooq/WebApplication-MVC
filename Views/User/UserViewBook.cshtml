@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication_MVC.ViewModel.BookViewModel>
+﻿@model IEnumerable<WebApplication_MVC.Models.Book>
 @{
     ViewBag.Title = "UserViewBook";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -29,32 +29,30 @@
         <div class="panel panel-flat">
             <div class="panel-heading">
                 <h5 class="panel-title text-center">User Book Table<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
-                <div>@ViewBag.msg</div>
+                                        <div style="color: @ViewBag.color">@ViewBag.msg</div>
             </div>
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="datatable-header">
-                    @*<a href="@Url.Action("UseViewBook", "User")"><i class="icon-glyphicon-edit"></i> Search Book</a>*@
-                    <div class="align-items-lg-center  col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3" align="center">
-                        <form action="@Url.Action("UserViewBook","User")" @*method="post"*@>
-                            <div class="form-group">
-                                <label>Search Book:</label>
-                                <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
-                                    @foreach (var item in ViewBag.allUserbook)
-                                    {
-                                        <option value="@item.Id">@item.Title</option>
-                                    }
-                                </select>
+                    <form action="@Url.Action("UserViewBook", "User")">
+                        <div class="row">
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.title"  type="text" name="title" class="form-control" placeholder="Type to Search by title:..." />
                             </div>
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-danger legitRipple align-items-lg-center ">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.author"  type="text" name="author" class="form-control" placeholder="Type to Search by author:..." />
                             </div>
-                        </form>
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2">
+                                <button type="submit" class="btn btn-danger legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            </div>
+                        </div>
+                    </form>
                     </div>
-                </div>
                 <div class="content d-flex align-items-lg-center">
                     <div class="panel panel-flat">
-                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
-                            <table class="table datatable-basic dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                        <div>
+                            <table class="table dataTable no-footer" id="sampleTable">
                                 <thead>
                                     <tr role="row">
                                         <th>Sr.No</th>
@@ -66,7 +64,7 @@
                                 <tbody>
                                     @{
                                         var i = 0;
-                                        foreach (var item in Model)
+                                        foreach (var item in ViewBag.BookList)
                                         {
                                             i++;
                                             <tr role="row" class="odd">
@@ -100,6 +98,12 @@
 </div>
 
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        $('#sampleTable').DataTable();
+    } );
+
+
     function deleteFunction(id) {
         var a = document.getElementById('deleteId');
         a.href = "../User/UserDeleteBook?id=" + id + "";

@@ -1,8 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using WebApplication_MVC.BL
+@using WebApplication_MVC.Models
+@using WebApplication_MVC.Helping_Classes
+@{ DatabaseEntities de = new DatabaseEntities();
+    SessionDTO sdto = new SessionDTO();
+    User loggedinUser = new UserBL().GetUserById(sdto.getId(), de); }
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>@Page.Title</title>
-
+    @*<title>@Page.Title</title>*@
+    <title>
+        WebApplication_MVC
+    </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,10 +42,10 @@
 
     <script type="text/javascript" src="~/Content/assets/js/core/app.js"></script>
     <script type="text/javascript" src="~/Content/assets/js/pages/dashboard.js"></script>
-
     <script type="text/javascript" src="~/Content/assets/js/plugins/ui/ripple.min.js"></script>
+
     <!-- /theme JS files -->
-    @RenderSection("head", required: false)
+    @*@RenderSection("head", required: false)*@
 </head>
 
 <body>
@@ -56,7 +65,7 @@
                 <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
 
             </ul><div class="navbar-right">
-                <p class="navbar-text">Morning,  @Session["UserName"]!</p>
+                <p class="navbar-text">Morning,  @loggedinUser.FirstName @loggedinUser.LastName!</p>
                 <p class="navbar-text"><span class="label bg-success-400">Online</span></p>
             </div>
         </div>
@@ -67,8 +76,7 @@
 
         <!-- Page content -->
         <div class="page-content">
-            @{ var rolee = Session["Role"];
-                if (String.Equals(rolee, "1"))
+            @{ if (loggedinUser.Role == 1)
                 { <!-- Main sidebar -->
                                     <div class="sidebar sidebar-main sidebar-default">
                                         <div class="sidebar-content">
@@ -77,8 +85,8 @@
                                             <div class="sidebar-user-material">
                                                 <div class="category-content">
                                                     <div class="sidebar-user-material-content">
-                                                        <h6>@Session["UserName"]</h6>
-                                                        <span class="text-size-small">@Session["UserEmail"]</span>
+                                                        <h6>@loggedinUser.FirstName @loggedinUser.LastName</h6>
+                                                        <span class="text-size-small">@loggedinUser.Email</span>
                                                     </div>
 
                                                     <div class="sidebar-user-material-menu">
@@ -88,7 +96,7 @@
 
                                                 <div class="navigation-wrapper collapse" id="user-nav">
                                                     <ul class="navigation">
-                                                        <li><a href="@Url.Action("AdminProfile", "Admin", new {id = Session["UserID"], msg =""})"><i class="icon-user-plus"></i> <span>Admin profile settings</span></a></li>
+                                                        <li><a href="@Url.Action("profile", "Auth", new {id = loggedinUser.Id})"><i class="icon-user-plus"></i> <span>Admin profile settings</span></a></li>
                                                         <li class="divider"></li>
                                                         <li><a href="@Url.Action("Logout", "Auth")"><i class="icon-switch2"></i> <span>Logout</span></a></li>
                                                     </ul>
@@ -101,18 +109,18 @@
                                                     <ul class="navigation navigation-main navigation-accordion">
                                                         <!-- Main -->
                                                         <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-                                                        <li class="active"><a href="@Url.Action("AdminDashboard", "Admin", new { msg = ""})"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+                                                        <li class="active"><a href="@Url.Action("AdminDashboard", "Admin")"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
                                                         <li>
                                                             <a href="#"><i class="icon-stack2"></i> <span>User Management</span></a>
                                                             <ul>
-                                                                <li><a href="@Url.Action("AdminViewUser", "Admin" , new { msg = ""})">View User</a></li>
-                                                                <li><a href="@Url.Action("AdminAddUser", "Admin" , new { msg = ""})">Create User</a></li>
+                                                                <li><a href="@Url.Action("AdminViewUser", "Admin")">View User</a></li>
+                                                                <li><a href="@Url.Action("AdminAddUser", "Admin")">Create User</a></li>
                                                             </ul>
                                                         </li>
                                                         <li>
                                                             <a href="#"><i class="icon-stack2"></i> <span>User-Book Management</span></a>
                                                             <ul>
-                                                                <li><a href="@Url.Action("AdminViewUserBook", "Admin" , new { msg = ""})">View User-Book</a></li>
+                                                                <li><a href="@Url.Action("AdminViewUserBook", "Admin")">View User-Book</a></li>
                                                             </ul>
                                                         </li>
                                                         <!-- /main -->
@@ -131,8 +139,8 @@
                                                             <div class="sidebar-user-material">
                                                                 <div class="category-content">
                                                                     <div class="sidebar-user-material-content">
-                                                                        <h6>@Session["UserName"]</h6>
-                                                                        <span class="text-size-small">@Session["UserEmail"]</span>
+                                                                        <h6>@loggedinUser.FirstName @loggedinUser.LastName</h6>
+                                                                        <span class="text-size-small">@loggedinUser.Email</span>
                                                                     </div>
 
                                                                     <div class="sidebar-user-material-menu">
@@ -142,7 +150,7 @@
 
                                                                 <div class="navigation-wrapper collapse" id="user-nav">
                                                                     <ul class="navigation">
-                                                                        <li><a href="@Url.Action("UserProfile", "User", new {id = Session["UserID"]})"><i class="icon-user-plus"></i> <span>User profile settings</span></a></li>
+                                                                        <li><a href="@Url.Action("Profile", "auth", new {id = loggedinUser.Id})"><i class="icon-user-plus"></i> <span>User profile settings</span></a></li>
                                                                         <li class="divider"></li>
                                                                         <li><a href="@Url.Action("Logout", "Auth")"><i class="icon-switch2"></i> <span>Logout</span></a></li>
                                                                     </ul>
@@ -155,12 +163,12 @@
                                                                     <ul class="navigation navigation-main navigation-accordion">
                                                                         <!-- Main -->
                                                                         <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-                                                                        <li class="active"><a href="@Url.Action("UserDashBoard", "User" , new { msg = ""})"><i class="icon-home4"></i> <span>User Dashboard</span></a></li>
+                                                                        <li class="active"><a href="@Url.Action("UserDashBoard", "User" )"><i class="icon-home4"></i> <span>User Dashboard</span></a></li>
                                                                         <li>
                                                                             <a href="#"><i class="icon-stack2"></i> <span>Book Management</span></a>
                                                                             <ul>
-                                                                                <li><a href="@Url.Action("UserViewBook", "User" , new { msg = ""})">View Book</a></li>
-                                                                                <li><a href="@Url.Action("UserAddBook", "User" , new { msg = ""})">Create Book</a></li>
+                                                                                <li><a href="@Url.Action("UserViewBook", "User")">View Book</a></li>
+                                                                                <li><a href="@Url.Action("UserAddBook", "User" )">Create Book</a></li>
                                                                             </ul>
                                                                         </li>
                                                                         <!-- /main -->

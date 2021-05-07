@@ -13,7 +13,7 @@
             </div>
             <div class="panel-body ">
                 <form class="form-horizontal" action="@Url.Action("PostUserProfile", "User")" method="post">
-                    <div>@ViewBag.msg</div>
+                    <div style="color: @ViewBag.color">@ViewBag.msg</div>
                     <fieldset class="content-group">
                         <legend class="text-bold"> &nbsp;&nbsp; Profile Information</legend>
                         <input type="hidden" class="form-control" name="Id" value="@ViewBag.User.Id">

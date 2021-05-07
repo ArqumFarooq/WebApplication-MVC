@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication_MVC.ViewModel.BookViewModel>
+﻿@model IEnumerable<WebApplication_MVC.Models.Book>
 
 @{
     ViewBag.Title = "UserSearchBook";
@@ -13,7 +13,7 @@
                 <div align="center">
                     <form action="@Url.Action("PostUserSearchBook","User")" method="post">
                         <div class="form-group">
-                            <div>@ViewBag.msg</div>
+                            <div style="color: @ViewBag.color">@ViewBag.msg</div>
                             <label>Book:</label>
                             <select class="form-control" tabindex="-1" aria-hidden="true" name="id" id="id">
                                 @foreach (var item in Model)

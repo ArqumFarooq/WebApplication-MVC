@@ -11,7 +11,7 @@
         <div class="panel panel-flat">
             <div class="panel-heading">
                 <h5 class="panel-title text-center">User Book Records<a class="heading-elements-toggle"><i class="icon-more"></i></a></h5>
-                <div>@ViewBag.msg</div>
+                                        <div style="color: @ViewBag.color">@ViewBag.msg</div>
             </div>
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="datatable-header">
@@ -34,7 +34,24 @@
                             </div>
                         </form>
                     </div>*@
-                    
+                    <form action="@Url.Action("AdminViewUserBook", "Admin")">
+                        <div class="row">
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Name" type="text" name="Name" class="form-control" placeholder="Type to Search Name:..." />
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Title" type="text" name="Title" class="form-control" placeholder="Type to Search Title:..." />
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <input value="ViewBag.Author" type="text" name="Author" class="form-control" placeholder="Type to Search Author:..." />
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2">
+                                <button type="submit" class="btn btn-danger legitRipple">Submit<i class="icon-arrow-right14 position-right"></i></button>
+                            </div>
+                        </div>
+                    </form>
 
                 </div>
                 
@@ -47,17 +64,15 @@
                                     <tr role="row">
                                         <th>Sr.No</th>
                                         <th>User Name</th>
-                                        @*<th>First Name</th>
-                                        <th>Second Name</th>*@
                                         <th>Title</th>
                                         <th>Author</th>
-
+                                        <th>Issue Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @{
                                     var i = 0;
-                                    foreach (Book item in ViewBag.booklist)
+                                    foreach (Book item in ViewBag.Book)
                                     {
                                         i++;
                                         <tr role="row" class="odd">
@@ -65,7 +80,7 @@
                                             <td>@item.User.FirstName&nbsp;@item.User.LastName</td>
                                             <td>@item.Title</td>
                                             <td>@item.Auther</td>
-
+                                            <td>@item.CreatedAt.Value.Date.ToLongDateString()</td>
                                         </tr>
                                     }
                                 }
